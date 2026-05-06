@@ -1,0 +1,203 @@
+Build a production-ready full-stack Reddit-style social media platform dashboard using the following stack:
+
+Frontend:
+- React (Vite)
+- Tailwind CSS
+- React Router DOM
+- Axios
+- Zustand for state management
+- React Hook Form
+- Framer Motion
+- Lucide React icons
+
+Backend:
+- Node.js
+- Express.js
+- JWT middleware
+- REST API architecture
+- Modular MVC structure
+
+Authentication + Database + Storage:
+- Supabase
+- Supabase Auth
+- Supabase PostgreSQL
+- Supabase Storage
+
+Project Requirements:
+Create a modern scalable architecture with separate frontend and backend folders.
+
+========================================
+FRONTEND REQUIREMENTS
+========================================
+
+Create a responsive Reddit-style dashboard UI with:
+
+Pages:
+- Login
+- Register
+- Home Feed
+- Community Page
+- Post Details Page
+- User Profile
+- Notifications
+- Saved Posts
+- Settings
+- Admin Dashboard
+- Create Post Modal
+- Create Community Modal
+
+Layout:
+- Left Sidebar
+- Main Feed
+- Right Sidebar
+- Sticky Navbar
+- Mobile Bottom Navigation
+
+Features:
+- Dark/Light mode
+- Skeleton loaders
+- Toast notifications
+- Infinite scrolling
+- Responsive design
+- Protected routes
+- Role-based routes
+- Search bar
+- Trending section
+- Recommended communities
+
+Admin Dashboard:
+- Manage users
+- Manage communities
+- Manage reports
+- Manage posts
+- Manage comments
+- Analytics cards
+- Charts
+- Subscription management
+- Content moderation
+- Bulk upload system
+
+UI Design:
+- Modern SaaS-level UI
+- Tailwind reusable components
+- Smooth animations
+- Glassmorphism cards
+- Clean typography
+- Reusable modal system
+
+========================================
+BACKEND REQUIREMENTS
+========================================
+
+Create scalable backend architecture:
+
+Structure:
+backend/
+ ├── controllers
+ ├── routes
+ ├── middleware
+ ├── services
+ ├── utils
+ ├── validators
+ ├── config
+ ├── uploads
+ └── server.js
+
+Implement:
+- JWT auth middleware
+- Error handling middleware
+- Validation middleware
+- Rate limiting
+- Secure API structure
+- Logging middleware
+- Environment variables
+
+========================================
+SUPABASE INTEGRATION
+========================================
+
+Integrate:
+- Supabase Auth
+- PostgreSQL database
+- Storage buckets
+- Row-level security
+- Secure session management
+
+Create SQL schema for:
+- users
+- communities
+- posts
+- comments
+- votes
+- notifications
+- saved_posts
+- reports
+- subscriptions
+- admin_logs
+
+========================================
+FUNCTIONAL FEATURES
+========================================
+
+Implement:
+- User authentication
+- Create/edit/delete posts
+- Image upload
+- Upvote/downvote
+- Nested comments
+- Save posts
+- Community creation
+- Community moderation
+- Notifications
+- User following
+- Search system
+- Trending algorithm
+- Reporting system
+- Admin analytics
+- Real-time updates
+- Feed sorting
+
+========================================
+API INTEGRATION
+========================================
+
+Use Axios service layer with:
+- centralized API config
+- interceptors
+- token refresh handling
+- reusable API hooks
+
+========================================
+SECURITY
+========================================
+
+Implement:
+- XSS protection
+- CORS
+- Helmet
+- Input validation
+- SQL injection protection
+- Rate limiting
+- Role-based authorization
+
+========================================
+DELIVERABLES
+========================================
+
+Generate:
+1. Full folder structure
+2. Frontend setup
+3. Backend setup
+4. Tailwind configuration
+5. Supabase configuration
+6. Auth flow
+7. Dashboard pages
+8. API integration layer
+9. Protected routing
+10. Reusable components
+11. Database schema
+12. Environment variable examples
+13. Setup instructions
+14. Deployment readiness
+
+The application must be scalable, cleanly structured, and production-ready.

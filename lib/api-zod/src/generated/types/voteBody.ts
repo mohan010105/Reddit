@@ -5,7 +5,8 @@
  * Reddit-style social platform API
  * OpenAPI spec version: 0.1.0
  */
+import type { VoteBodyValue } from "./voteBodyValue";
 
-export interface HealthStatus {
-  status: string;
+export interface VoteBody {
+  value: VoteBodyValue;
 }
