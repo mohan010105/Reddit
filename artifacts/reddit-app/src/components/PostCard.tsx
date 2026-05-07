@@ -1,7 +1,8 @@
 import { Link } from "wouter";
-import { ArrowUp, ArrowDown, MessageSquare, Bookmark, BookmarkCheck, Flag, MoreHorizontal, Trash2, Pencil } from "lucide-react";
+import { ArrowUp, ArrowDown, MessageSquare, Bookmark, BookmarkCheck, Flag, MoreHorizontal, Trash2, Share2, ExternalLink } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
 import {
@@ -18,9 +19,10 @@ import { ReportModal } from "@/components/ReportModal";
 interface PostCardProps {
   post: Post;
   compact?: boolean;
+  index?: number;
 }
 
-export function PostCard({ post, compact = false }: PostCardProps) {
+export function PostCard({ post, compact = false, index = 0 }: PostCardProps) {
   const { session } = useAuth();
   const queryClient = useQueryClient();
   const [myVote, setMyVote] = useState(post.myVote ?? 0);
@@ -74,49 +76,79 @@ export function PostCard({ post, compact = false }: PostCardProps) {
     });
   };
 
+  const handleShare = () => {
+    const url = `${window.location.origin}/post/${post.id}`;
+    navigator.clipboard.writeText(url).then(() => toast.success("Link copied!")).catch(() => toast.error("Failed to copy"));
+  };
+
   return (
-    <div className="bg-card border border-card-border rounded-xl overflow-hidden hover:border-primary/30 transition-colors group" data-testid={`card-post-${post.id}`}>
+    <motion.div
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3, delay: Math.min(index * 0.05, 0.4), ease: "easeOut" }}
+      className="bg-card border border-card-border rounded-xl overflow-hidden hover:border-primary/40 hover:shadow-md hover:shadow-primary/5 transition-all duration-200 group"
+      data-testid={`card-post-${post.id}`}
+    >
       <div className="flex">
         {/* Vote column */}
-        <div className="flex flex-col items-center gap-1 px-2 py-3 bg-muted/40 w-12 shrink-0">
-          <button
+        <div className="flex flex-col items-center gap-1 px-2 py-3 bg-muted/30 w-12 shrink-0">
+          <motion.button
+            whileTap={{ scale: 0.85 }}
             onClick={() => handleVote(1)}
-            className={`p-1 rounded transition-colors ${myVote === 1 ? "text-primary" : "text-muted-foreground hover:text-primary"}`}
+            className={`p-1 rounded-md transition-colors ${myVote === 1 ? "text-primary bg-primary/10" : "text-muted-foreground hover:text-primary hover:bg-primary/10"}`}
             data-testid={`button-upvote-${post.id}`}
           >
             <ArrowUp className="w-4 h-4" />
-          </button>
-          <span className={`text-xs font-bold ${myVote === 1 ? "text-primary" : myVote === -1 ? "text-blue-500" : "text-foreground"}`}>
-            {score}
-          </span>
-          <button
+          </motion.button>
+          <AnimatePresence mode="wait">
+            <motion.span
+              key={score}
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.8 }}
+              transition={{ duration: 0.15 }}
+              className={`text-xs font-bold tabular-nums ${myVote === 1 ? "text-primary" : myVote === -1 ? "text-blue-500" : "text-foreground"}`}
+            >
+              {score >= 1000 ? `${(score / 1000).toFixed(1)}k` : score}
+            </motion.span>
+          </AnimatePresence>
+          <motion.button
+            whileTap={{ scale: 0.85 }}
             onClick={() => handleVote(-1)}
-            className={`p-1 rounded transition-colors ${myVote === -1 ? "text-blue-500" : "text-muted-foreground hover:text-blue-500"}`}
+            className={`p-1 rounded-md transition-colors ${myVote === -1 ? "text-blue-500 bg-blue-500/10" : "text-muted-foreground hover:text-blue-500 hover:bg-blue-500/10"}`}
             data-testid={`button-downvote-${post.id}`}
           >
             <ArrowDown className="w-4 h-4" />
-          </button>
+          </motion.button>
         </div>
 
         {/* Content */}
         <div className="flex-1 p-3 min-w-0">
           {/* Meta */}
-          <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1.5 flex-wrap">
+          <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-1.5 flex-wrap">
+            <Avatar className="w-4 h-4">
+              <AvatarFallback className="text-[8px] bg-primary/20 text-primary">{post.community.name[0]}</AvatarFallback>
+            </Avatar>
             <Link href={`/r/${post.community.slug}`} className="font-semibold text-foreground hover:text-primary transition-colors">
               r/{post.community.slug}
             </Link>
-            <span>·</span>
+            <span className="text-muted-foreground/50">·</span>
             <span>Posted by</span>
             <Link href={`/u/${post.author.username}`} className="hover:text-foreground transition-colors">
               u/{post.author.username}
             </Link>
-            <span>·</span>
+            <span className="text-muted-foreground/50">·</span>
             <span>{formatDistanceToNow(new Date(post.createdAt), { addSuffix: true })}</span>
+            {post.type === "link" && (
+              <span className="ml-auto flex items-center gap-0.5 text-primary">
+                <ExternalLink className="w-3 h-3" /> link
+              </span>
+            )}
           </div>
 
           {/* Title */}
           <Link href={`/post/${post.id}`}>
-            <h2 className="font-semibold text-base leading-snug hover:text-primary transition-colors line-clamp-2 mb-1.5">
+            <h2 className="font-semibold text-base leading-snug hover:text-primary transition-colors line-clamp-2 mb-1.5 group-hover:text-primary/90">
               {post.title}
             </h2>
           </Link>
@@ -124,39 +156,60 @@ export function PostCard({ post, compact = false }: PostCardProps) {
           {/* Image */}
           {post.imageUrl && !compact && (
             <Link href={`/post/${post.id}`}>
-              <img src={post.imageUrl} alt={post.title} className="w-full max-h-96 object-cover rounded-lg mb-2" loading="lazy" />
+              <div className="relative overflow-hidden rounded-lg mb-2 bg-muted">
+                <img
+                  src={post.imageUrl}
+                  alt={post.title}
+                  className="w-full max-h-80 object-cover transition-transform duration-300 group-hover:scale-[1.01]"
+                  loading="lazy"
+                />
+              </div>
             </Link>
           )}
 
           {/* Content preview */}
-          {post.content && !compact && (
-            <p className="text-sm text-muted-foreground line-clamp-3 mb-2">{post.content}</p>
+          {post.content && !compact && !post.imageUrl && (
+            <p className="text-sm text-muted-foreground line-clamp-2 mb-2 leading-relaxed">{post.content}</p>
           )}
 
           {/* Actions */}
-          <div className="flex items-center gap-1 text-muted-foreground">
+          <div className="flex items-center gap-0.5 text-muted-foreground mt-1">
             <Link href={`/post/${post.id}`}>
-              <Button variant="ghost" size="sm" className="h-7 px-2 gap-1.5 text-xs" data-testid={`button-comments-${post.id}`}>
+              <Button variant="ghost" size="sm" className="h-7 px-2 gap-1.5 text-xs hover:text-foreground" data-testid={`button-comments-${post.id}`}>
                 <MessageSquare className="w-3.5 h-3.5" />
-                {post.commentCount} comments
+                {post.commentCount} {post.commentCount === 1 ? "comment" : "comments"}
               </Button>
             </Link>
-            <Button
-              variant="ghost" size="sm"
-              className={`h-7 px-2 gap-1.5 text-xs ${isSaved ? "text-primary" : ""}`}
-              onClick={handleSave}
-              data-testid={`button-save-${post.id}`}
-            >
-              {isSaved ? <BookmarkCheck className="w-3.5 h-3.5" /> : <Bookmark className="w-3.5 h-3.5" />}
-              {isSaved ? "Saved" : "Save"}
+            <motion.div whileTap={{ scale: 0.95 }}>
+              <Button
+                variant="ghost" size="sm"
+                className={`h-7 px-2 gap-1.5 text-xs hover:text-foreground ${isSaved ? "text-primary" : ""}`}
+                onClick={handleSave}
+                data-testid={`button-save-${post.id}`}
+              >
+                <AnimatePresence mode="wait" initial={false}>
+                  {isSaved ? (
+                    <motion.span key="saved" initial={{ scale: 0 }} animate={{ scale: 1 }} className="flex items-center gap-1.5">
+                      <BookmarkCheck className="w-3.5 h-3.5" /> Saved
+                    </motion.span>
+                  ) : (
+                    <motion.span key="save" initial={{ scale: 0 }} animate={{ scale: 1 }} className="flex items-center gap-1.5">
+                      <Bookmark className="w-3.5 h-3.5" /> Save
+                    </motion.span>
+                  )}
+                </AnimatePresence>
+              </Button>
+            </motion.div>
+            <Button variant="ghost" size="sm" className="h-7 px-2 gap-1.5 text-xs hover:text-foreground" onClick={handleShare}>
+              <Share2 className="w-3.5 h-3.5" /> Share
             </Button>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-7 w-7">
+                <Button variant="ghost" size="icon" className="h-7 w-7 ml-auto">
                   <MoreHorizontal className="w-3.5 h-3.5" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="start">
+              <DropdownMenuContent align="end">
                 {session && (
                   <DropdownMenuItem onClick={() => setReportOpen(true)}>
                     <Flag className="w-3.5 h-3.5 mr-2" /> Report
@@ -171,6 +224,6 @@ export function PostCard({ post, compact = false }: PostCardProps) {
         </div>
       </div>
       <ReportModal open={reportOpen} onClose={() => setReportOpen(false)} postId={post.id} />
-    </div>
+    </motion.div>
   );
 }

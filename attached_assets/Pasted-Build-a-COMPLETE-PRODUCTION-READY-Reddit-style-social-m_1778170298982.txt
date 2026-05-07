@@ -1,0 +1,459 @@
+Build a COMPLETE PRODUCTION-READY Reddit-style social media platform step-by-step in 4 fully connected phases using modern scalable architecture.
+
+Tech Stack:
+Frontend:
+- React + Vite
+- Tailwind CSS
+- React Router DOM
+- Zustand
+- Axios
+- React Hook Form
+- Framer Motion
+- Lucide React
+
+Backend:
+- Node.js
+- Express.js
+- JWT Authentication
+- REST APIs
+- MVC architecture
+
+Database + Auth + Storage:
+- Supabase
+- Supabase Auth
+- PostgreSQL
+- Supabase Storage
+- Supabase Realtime
+
+Deployment Ready:
+- Frontend → Vercel
+- Backend → Render
+- Database/Auth → Supabase
+
+The application must be scalable, modular, optimized, responsive, secure, and production-grade.
+
+====================================================
+GLOBAL APPLICATION REQUIREMENTS
+====================================================
+
+Create a Reddit-style modern social media platform with:
+- Modern SaaS UI
+- Responsive design
+- Mobile-first optimization
+- Dark/Light mode
+- Infinite scrolling
+- Skeleton loading
+- Toast notifications
+- Reusable component architecture
+- Role-based authentication
+- Protected routes
+- API abstraction layer
+- Environment variable configuration
+- SEO optimization
+- Performance optimization
+- Production-level folder structure
+
+====================================================
+FRONTEND ARCHITECTURE
+====================================================
+
+Create frontend structure:
+
+frontend/
+ ├── src/
+ │   ├── api/
+ │   ├── assets/
+ │   ├── components/
+ │   ├── layouts/
+ │   ├── pages/
+ │   ├── hooks/
+ │   ├── store/
+ │   ├── routes/
+ │   ├── utils/
+ │   ├── context/
+ │   ├── constants/
+ │   ├── services/
+ │   ├── animations/
+ │   ├── modals/
+ │   └── App.jsx
+
+Implement:
+- Reusable UI system
+- Responsive layouts
+- Protected routes
+- Role-based rendering
+- API interceptors
+- Optimized state management
+- Error boundaries
+- Lazy loading
+- Code splitting
+
+====================================================
+BACKEND ARCHITECTURE
+====================================================
+
+Create backend structure:
+
+backend/
+ ├── controllers/
+ ├── routes/
+ ├── middleware/
+ ├── services/
+ ├── validators/
+ ├── config/
+ ├── utils/
+ ├── realtime/
+ ├── analytics/
+ ├── ai/
+ ├── cron/
+ ├── uploads/
+ └── server.js
+
+Implement:
+- MVC pattern
+- REST APIs
+- JWT middleware
+- Validation middleware
+- Error middleware
+- Logging middleware
+- Rate limiting
+- Role authorization
+- API versioning
+- Secure headers
+- File upload handling
+- Production security
+
+====================================================
+DATABASE DESIGN
+====================================================
+
+Create scalable PostgreSQL schema using Supabase.
+
+Tables:
+- users
+- profiles
+- communities
+- community_members
+- posts
+- comments
+- votes
+- notifications
+- saved_posts
+- followers
+- reports
+- subscriptions
+- transactions
+- analytics
+- admin_logs
+- ai_moderation_logs
+- hashtags
+- post_hashtags
+- bookmarks
+
+Include:
+- Foreign keys
+- Constraints
+- Indexing
+- Cascading deletes
+- Optimized queries
+- Row-level security policies
+
+====================================================
+PHASE 1 — CORE MVP
+====================================================
+
+AUTHENTICATION:
+Implement:
+- Register
+- Login
+- Logout
+- Google OAuth
+- Forgot password
+- Email verification
+- Session persistence
+- Protected routes
+- JWT token handling
+
+DASHBOARD LAYOUT:
+Create:
+- Navbar
+- Left sidebar
+- Main feed
+- Right sidebar
+- Mobile bottom nav
+- Trending section
+- Recommended communities
+- Search bar
+- User dropdown
+
+COMMUNITIES:
+Implement:
+- Create community
+- Community banner/avatar
+- Join/leave community
+- Community rules
+- Community page
+- Community feed
+- Community moderators
+
+POSTS:
+Implement:
+- Create text/image/link post
+- Edit/delete posts
+- Post detail page
+- Image uploads
+- Rich post cards
+- Infinite feed
+- Feed sorting
+- Trending posts
+
+COMMENTS:
+Implement:
+- Add comments
+- Edit/delete comments
+- Nested comments
+- Comment replies
+- Real-time comment updates
+
+Deliverables:
+- Fully functional MVP
+- Responsive UI
+- Clean reusable components
+- Secure backend APIs
+
+====================================================
+PHASE 2 — USER ENGAGEMENT
+====================================================
+
+VOTING SYSTEM:
+Implement:
+- Upvote/downvote
+- Vote toggling
+- Vote count aggregation
+- Real-time vote updates
+- Trending algorithm
+
+NOTIFICATIONS:
+Implement:
+- Real-time notifications
+- Likes
+- Comments
+- Follows
+- Mentions
+- Community invites
+
+SAVED POSTS:
+Implement:
+- Save/unsave posts
+- Bookmark collections
+- Saved post page
+
+SEARCH:
+Implement:
+- Search posts
+- Search users
+- Search communities
+- Search hashtags
+- PostgreSQL full-text search
+- Debounced search input
+
+USER PROFILES:
+Implement:
+- Profile page
+- User avatar/banner
+- Bio
+- Followers/following
+- User posts/comments
+- Activity history
+
+Deliverables:
+- Interactive social features
+- Real-time engagement
+- Optimized search system
+
+====================================================
+PHASE 3 — ADMIN + AI + ANALYTICS
+====================================================
+
+ADMIN DASHBOARD:
+Implement:
+- Admin authentication
+- User management
+- Community management
+- Post moderation
+- Comment moderation
+- Reports handling
+- Analytics dashboard
+- Revenue dashboard
+- Ban/suspend users
+- Role management
+
+MODERATION:
+Implement:
+- Report system
+- Spam detection
+- Toxicity filtering
+- NSFW detection
+- Content approval queue
+- Community moderation tools
+
+ANALYTICS:
+Implement:
+- User analytics
+- Engagement analytics
+- Traffic charts
+- Growth metrics
+- Post analytics
+- Community analytics
+- Real-time dashboard charts
+
+AI FEATURES:
+Integrate OpenAI APIs for:
+- AI comment moderation
+- AI content summarization
+- AI spam detection
+- AI-generated tags
+- Smart recommendations
+- AI feed ranking
+
+Deliverables:
+- Enterprise-grade admin system
+- AI-powered moderation
+- Analytics dashboards
+
+====================================================
+PHASE 4 — SCALING + MONETIZATION
+====================================================
+
+PAYMENTS:
+Integrate Stripe:
+- Subscription plans
+- Premium memberships
+- Ad-free plans
+- Community subscriptions
+- Creator monetization
+- Transaction history
+
+REALTIME OPTIMIZATION:
+Implement:
+- Supabase realtime optimization
+- Optimistic UI updates
+- Realtime comments
+- Live feeds
+- Live notifications
+
+RECOMMENDATION ENGINE:
+Implement:
+- Personalized feed
+- Interest-based recommendations
+- Trending engine
+- AI-powered suggestions
+- User behavior tracking
+
+MOBILE OPTIMIZATION:
+Implement:
+- Mobile-first UI
+- Touch gestures
+- PWA support
+- Offline caching
+- Push notifications
+- Optimized performance
+
+====================================================
+SECURITY REQUIREMENTS
+====================================================
+
+Implement:
+- Helmet
+- CORS
+- Rate limiting
+- XSS protection
+- CSRF protection
+- Input sanitization
+- SQL injection prevention
+- API validation
+- Secure cookies
+- Role-based authorization
+- Row-level security
+
+====================================================
+UI/UX REQUIREMENTS
+====================================================
+
+Design:
+- Reddit-inspired modern UI
+- Glassmorphism cards
+- Smooth animations
+- Modern typography
+- Skeleton loaders
+- Reusable modal system
+- Responsive grids
+- Accessible design
+- Beautiful empty states
+- Hover interactions
+
+====================================================
+API REQUIREMENTS
+====================================================
+
+Create complete REST APIs for:
+- Auth
+- Users
+- Communities
+- Posts
+- Comments
+- Votes
+- Notifications
+- Saved posts
+- Search
+- Admin
+- Analytics
+- AI moderation
+- Payments
+
+Implement:
+- API validation
+- Pagination
+- Filtering
+- Sorting
+- Error handling
+- Rate limiting
+- Logging
+
+====================================================
+DEVOPS + DEPLOYMENT
+====================================================
+
+Prepare:
+- Environment variables
+- Production configs
+- Docker support
+- Vercel deployment
+- Render deployment
+- CI/CD readiness
+- Error monitoring
+- Logging system
+
+====================================================
+FINAL DELIVERABLES
+====================================================
+
+Generate:
+1. Complete frontend
+2. Complete backend
+3. Complete database schema
+4. Supabase integration
+5. Authentication flow
+6. Reusable UI components
+7. API layer
+8. Protected routing
+9. Admin dashboard
+10. AI integrations
+11. Payment integration
+12. Real-time systems
+13. Deployment configs
+14. Environment variables
+15. README documentation
+16. Production-ready scalable architecture
+
+The final application must function end-to-end without placeholder logic and should be deployable directly to production.
