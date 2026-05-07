@@ -9,6 +9,7 @@ import savedRouter from "./saved";
 import searchRouter from "./search";
 import trendingRouter from "./trending";
 import adminRouter from "./admin";
+import storageRouter from "./storage";
 
 const router: IRouter = Router();
 
@@ -28,5 +29,6 @@ router.use("/saved", savedRouter);
 router.use("/search", searchRouter);
 router.use("/trending", trendingRouter);
 router.use("/admin", adminRouter);
+router.use("/storage", storageRouter);
 
 export default router;
