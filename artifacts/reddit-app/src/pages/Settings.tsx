@@ -11,14 +11,14 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Settings as SettingsIcon, User, FileText, Image, Trophy, Loader2, Save } from "lucide-react";
+import { Settings as SettingsIcon, User, FileText, Trophy, Loader2, Save } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { ImageUpload } from "@/components/ImageUpload";
 import { motion } from "framer-motion";
 
 const schema = z.object({
   username: z.string().min(3).max(20).regex(/^[a-zA-Z0-9_]+$/).optional(),
   bio: z.string().max(500).optional(),
-  avatarUrl: z.string().url().optional().or(z.literal("")),
 });
 type FormData = z.infer<typeof schema>;
 
@@ -28,23 +28,41 @@ export default function Settings() {
   const { data: me, isLoading } = useGetMe({ query: { enabled: !!session } });
   const updateProfile = useUpdateMyProfile();
 
-  const { register, handleSubmit, reset, watch, formState: { errors, isDirty } } = useForm<FormData>({ resolver: zodResolver(schema) });
+  const { register, handleSubmit, reset, formState: { errors, isDirty } } = useForm<FormData>({ resolver: zodResolver(schema) });
+
+  // Track avatar separately since it's managed by ImageUpload
+  const [avatarUrl, setAvatarUrl] = [
+    me?.avatarUrl ?? null,
+    (url: string | null) => {
+      updateProfile.mutate(
+        { data: { avatarUrl: url } },
+        {
+          onSuccess: () => {
+            toast.success("Avatar updated!");
+            queryClient.invalidateQueries({ queryKey: getGetMeQueryKey() });
+          },
+          onError: () => toast.error("Failed to update avatar"),
+        }
+      );
+    },
+  ] as const;
 
   useEffect(() => {
-    if (me) reset({ username: me.username, bio: me.bio ?? "", avatarUrl: me.avatarUrl ?? "" });
+    if (me) reset({ username: me.username, bio: me.bio ?? "" });
   }, [me, reset]);
 
-  const avatarUrl = watch("avatarUrl");
-
   const onSubmit = (data: FormData) => {
-    updateProfile.mutate({ data: { username: data.username, bio: data.bio || null, avatarUrl: data.avatarUrl || null } }, {
-      onSuccess: () => {
-        toast.success("Profile updated!");
-        queryClient.invalidateQueries({ queryKey: getGetMeQueryKey() });
-        reset(data);
-      },
-      onError: () => toast.error("Failed to update profile"),
-    });
+    updateProfile.mutate(
+      { data: { username: data.username, bio: data.bio || null } },
+      {
+        onSuccess: () => {
+          toast.success("Profile updated!");
+          queryClient.invalidateQueries({ queryKey: getGetMeQueryKey() });
+          reset(data);
+        },
+        onError: () => toast.error("Failed to update profile"),
+      }
+    );
   };
 
   return (
@@ -68,16 +86,17 @@ export default function Settings() {
           </div>
           <Skeleton className="h-10 w-full" />
           <Skeleton className="h-24 w-full" />
-          <Skeleton className="h-10 w-full" />
         </div>
       ) : (
         <div className="bg-card border border-card-border rounded-xl overflow-hidden">
-          {/* Profile header */}
+          {/* Banner */}
           <div className="h-20 bg-gradient-to-r from-primary/20 to-primary/5" />
+
           <div className="px-6 pb-6 -mt-10">
+            {/* Avatar + info */}
             <div className="flex items-end gap-4 mb-6">
               <Avatar className="w-20 h-20 border-4 border-card ring-2 ring-primary/20 shrink-0">
-                <AvatarImage src={avatarUrl || me?.avatarUrl || undefined} />
+                <AvatarImage src={me?.avatarUrl ?? undefined} />
                 <AvatarFallback className="text-3xl font-bold bg-gradient-to-br from-primary to-orange-400 text-white">
                   {me?.username?.[0]?.toUpperCase()}
                 </AvatarFallback>
@@ -89,6 +108,28 @@ export default function Settings() {
                   {me?.karma.toLocaleString()} karma
                 </p>
               </div>
+            </div>
+
+            {/* Avatar upload */}
+            <div className="space-y-1.5 mb-5">
+              <Label className="text-sm font-medium">Profile Photo</Label>
+              <ImageUpload
+                bucket="avatars"
+                value={avatarUrl}
+                onChange={url => {
+                  updateProfile.mutate(
+                    { data: { avatarUrl: url } },
+                    {
+                      onSuccess: () => {
+                        toast.success(url ? "Avatar updated!" : "Avatar removed");
+                        queryClient.invalidateQueries({ queryKey: getGetMeQueryKey() });
+                      },
+                      onError: () => toast.error("Failed to update avatar"),
+                    }
+                  );
+                }}
+                label="Upload a profile photo"
+              />
             </div>
 
             <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5">
@@ -122,23 +163,6 @@ export default function Settings() {
                   maxLength={500}
                 />
                 <p className="text-xs text-muted-foreground">Max 500 characters.</p>
-              </div>
-
-              <div className="space-y-1.5">
-                <Label className="flex items-center gap-1.5 text-sm font-medium">
-                  <Image className="w-3.5 h-3.5" /> Avatar URL
-                </Label>
-                <Input
-                  {...register("avatarUrl")}
-                  placeholder="https://example.com/avatar.jpg"
-                  data-testid="input-avatar-url"
-                  className="h-10"
-                />
-                {errors.avatarUrl && (
-                  <motion.p initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} className="text-destructive text-xs">
-                    Must be a valid URL
-                  </motion.p>
-                )}
               </div>
 
               <div className="flex gap-3 pt-1">

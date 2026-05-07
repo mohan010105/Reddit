@@ -1,0 +1,404 @@
+Implement COMPLETE production-grade authentication and core MVP backend/frontend integration for a Reddit-style social media platform using React + Supabase + Node.js + Express.
+
+====================================================
+TECH STACK
+====================================================
+
+Frontend:
+- React (Vite)
+- Tailwind CSS
+- React Router DOM
+- Zustand
+- Axios
+- React Hook Form
+- React Hot Toast
+- Framer Motion
+
+Backend:
+- Node.js
+- Express.js
+- JWT
+- REST APIs
+
+Services:
+- Supabase Auth
+- Supabase PostgreSQL
+- Supabase Storage
+- Supabase Realtime
+
+====================================================
+OBJECTIVE
+====================================================
+
+Build the COMPLETE authentication system and connect the frontend with live backend functionality.
+
+The application must support:
+- authentication
+- protected routes
+- persistent sessions
+- live feed fetching
+- post creation
+- community creation
+- comments
+- image uploads
+
+Everything must be scalable and production-ready.
+
+====================================================
+PHASE 1 IMPLEMENTATION
+====================================================
+
+Implement these systems completely:
+
+1. Supabase Authentication
+2. Zustand Auth Store
+3. Protected Routes
+4. Backend Express Foundation
+5. Auth APIs
+6. Community APIs
+7. Post APIs
+8. Comment APIs
+9. Dynamic Feed
+10. Create Post Modal
+11. Image Upload System
+12. Realtime Features
+
+====================================================
+SUPABASE AUTHENTICATION
+====================================================
+
+Integrate:
+- Register
+- Login
+- Logout
+- Forgot password
+- Email verification
+- Session persistence
+- Refresh token handling
+- Google OAuth
+
+Create:
+src/lib/supabase.js
+
+Implement:
+- auth helpers
+- session listeners
+- token persistence
+- automatic login restoration
+
+====================================================
+AUTH UI PAGES
+====================================================
+
+Create:
+1. Login Page
+2. Register Page
+3. Forgot Password Page
+
+Features:
+- React Hook Form validation
+- loading states
+- error handling
+- password visibility toggle
+- toast notifications
+- Google login button
+- responsive design
+- glassmorphism UI
+
+====================================================
+ZUSTAND AUTH STORE
+====================================================
+
+Create:
+src/store/authStore.js
+
+Store:
+- current user
+- session
+- loading state
+- auth status
+- login function
+- register function
+- logout function
+
+Features:
+- persistent auth state
+- automatic session restoration
+- loading handling
+
+====================================================
+PROTECTED ROUTES
+====================================================
+
+Create:
+- ProtectedRoute component
+- PublicRoute component
+- AdminRoute component
+
+Features:
+- redirect unauthorized users
+- loading fallback
+- role-based access
+
+====================================================
+BACKEND EXPRESS FOUNDATION
+====================================================
+
+Create backend structure:
+
+backend/
+├── controllers/
+├── routes/
+├── middleware/
+├── services/
+├── validators/
+├── config/
+├── utils/
+├── uploads/
+└── server.js
+
+Implement:
+- Express server
+- CORS
+- Helmet
+- Morgan logging
+- Rate limiting
+- Error middleware
+- JWT middleware
+- Validation middleware
+
+====================================================
+BACKEND PACKAGE INSTALLATION
+====================================================
+
+Install:
+- express
+- cors
+- dotenv
+- helmet
+- morgan
+- jsonwebtoken
+- bcryptjs
+- express-rate-limit
+- multer
+- cookie-parser
+
+====================================================
+AUTH APIs
+====================================================
+
+Create APIs:
+
+POST /api/auth/register
+POST /api/auth/login
+POST /api/auth/logout
+GET /api/auth/me
+
+Implement:
+- JWT token generation
+- password hashing
+- secure auth handling
+- validation
+- proper error handling
+
+====================================================
+COMMUNITY APIs
+====================================================
+
+Create APIs:
+
+POST /api/communities
+GET /api/communities
+GET /api/communities/:slug
+POST /api/communities/join
+
+Features:
+- create community
+- fetch communities
+- join/leave community
+- member counts
+- community validation
+
+====================================================
+POST APIs
+====================================================
+
+Create APIs:
+
+POST /api/posts
+GET /api/posts
+GET /api/posts/:id
+DELETE /api/posts/:id
+
+Features:
+- create post
+- fetch feed
+- fetch single post
+- delete post
+- image uploads
+- sorting
+- pagination
+
+====================================================
+COMMENT APIs
+====================================================
+
+Create APIs:
+
+POST /api/comments
+GET /api/comments/:postId
+
+Features:
+- nested comments
+- replies
+- comment tree rendering
+- comment validation
+
+====================================================
+CREATE POST MODAL
+====================================================
+
+Build reusable modal with:
+- title input
+- content textarea
+- image upload
+- community selector
+- validation
+- loading states
+- toast notifications
+
+====================================================
+DYNAMIC FEED
+====================================================
+
+Implement:
+- real feed fetching
+- dynamic posts
+- loading skeletons
+- infinite scrolling
+- sorting options
+
+Feed Types:
+- latest
+- trending
+- popular
+
+====================================================
+IMAGE UPLOAD SYSTEM
+====================================================
+
+Integrate Supabase Storage.
+
+Implement uploads for:
+- user avatars
+- banners
+- post images
+- community images
+
+Create reusable upload utility.
+
+Features:
+- drag/drop upload
+- image preview
+- upload progress
+- validation
+
+====================================================
+REALTIME FEATURES
+====================================================
+
+Use Supabase realtime.
+
+Implement:
+- live comments
+- live post updates
+- live notifications
+- realtime feed refresh
+
+====================================================
+API SERVICE LAYER
+====================================================
+
+Create:
+src/api/
+
+Implement:
+- centralized axios instance
+- API interceptors
+- token injection
+- reusable service functions
+
+====================================================
+UI REQUIREMENTS
+====================================================
+
+Design:
+- modern Reddit-style UI
+- glassmorphism cards
+- smooth animations
+- responsive layout
+- dark mode support
+- hover interactions
+
+Use:
+- Framer Motion
+- Tailwind CSS
+- reusable components
+
+====================================================
+RESPONSIVE REQUIREMENTS
+====================================================
+
+Optimize:
+- desktop
+- tablet
+- mobile
+
+Implement:
+- mobile navigation
+- collapsible sidebar
+- responsive feed layout
+
+====================================================
+SECURITY REQUIREMENTS
+====================================================
+
+Implement:
+- JWT validation
+- secure cookies
+- route protection
+- input sanitization
+- rate limiting
+- XSS protection
+- validation middleware
+
+====================================================
+FINAL DELIVERABLES
+====================================================
+
+Generate:
+1. Full auth system
+2. Zustand auth store
+3. Protected routes
+4. Express backend setup
+5. Auth APIs
+6. Community APIs
+7. Post APIs
+8. Comment APIs
+9. Dynamic feed
+10. Create post modal
+11. Supabase uploads
+12. Realtime integration
+13. Axios service layer
+14. Environment variable setup
+15. Production-ready architecture
+
+The application must:
+- run successfully
+- authenticate users properly
+- fetch live data
+- create posts
+- support comments
+- maintain sessions
+- work responsively
+- be production-ready

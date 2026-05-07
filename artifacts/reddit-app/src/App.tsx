@@ -20,6 +20,7 @@ import AdminUsers from "@/pages/AdminUsers";
 import AdminPosts from "@/pages/AdminPosts";
 import AdminReports from "@/pages/AdminReports";
 import NotFound from "@/pages/not-found";
+import ForgotPassword from "@/pages/ForgotPassword";
 import { useGetMe } from "@workspace/api-client-react";
 
 const queryClient = new QueryClient({
@@ -47,6 +48,7 @@ function Router() {
     <Switch>
       <Route path="/login" component={Login} />
       <Route path="/register" component={Register} />
+      <Route path="/forgot-password" component={ForgotPassword} />
       <Route>
         <Layout>
           <Switch>
