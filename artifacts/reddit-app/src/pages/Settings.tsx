@@ -11,8 +11,9 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Settings as SettingsIcon } from "lucide-react";
+import { Settings as SettingsIcon, User, FileText, Image, Trophy, Loader2, Save } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { motion } from "framer-motion";
 
 const schema = z.object({
   username: z.string().min(3).max(20).regex(/^[a-zA-Z0-9_]+$/).optional(),
@@ -27,70 +28,142 @@ export default function Settings() {
   const { data: me, isLoading } = useGetMe({ query: { enabled: !!session } });
   const updateProfile = useUpdateMyProfile();
 
-  const { register, handleSubmit, reset, formState: { errors } } = useForm<FormData>({ resolver: zodResolver(schema) });
+  const { register, handleSubmit, reset, watch, formState: { errors, isDirty } } = useForm<FormData>({ resolver: zodResolver(schema) });
 
   useEffect(() => {
     if (me) reset({ username: me.username, bio: me.bio ?? "", avatarUrl: me.avatarUrl ?? "" });
   }, [me, reset]);
+
+  const avatarUrl = watch("avatarUrl");
 
   const onSubmit = (data: FormData) => {
     updateProfile.mutate({ data: { username: data.username, bio: data.bio || null, avatarUrl: data.avatarUrl || null } }, {
       onSuccess: () => {
         toast.success("Profile updated!");
         queryClient.invalidateQueries({ queryKey: getGetMeQueryKey() });
+        reset(data);
       },
       onError: () => toast.error("Failed to update profile"),
     });
   };
 
   return (
-    <div className="flex flex-col gap-4 max-w-lg">
+    <motion.div
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="flex flex-col gap-4 max-w-lg"
+    >
       <h1 className="text-xl font-bold flex items-center gap-2">
         <SettingsIcon className="w-5 h-5 text-primary" /> Settings
       </h1>
 
-      <div className="bg-card border border-card-border rounded-xl p-6">
-        {isLoading ? (
-          <div className="space-y-4">
-            <Skeleton className="h-16 w-16 rounded-full" />
-            <Skeleton className="h-10 w-full" />
-            <Skeleton className="h-20 w-full" />
+      {isLoading ? (
+        <div className="bg-card border border-card-border rounded-xl p-6 space-y-5">
+          <div className="flex items-center gap-4">
+            <Skeleton className="w-20 h-20 rounded-full" />
+            <div className="space-y-2">
+              <Skeleton className="h-5 w-32" />
+              <Skeleton className="h-4 w-24" />
+            </div>
           </div>
-        ) : (
-          <>
-            <div className="flex items-center gap-4 mb-6">
-              <Avatar className="w-16 h-16">
-                <AvatarImage src={me?.avatarUrl ?? undefined} />
-                <AvatarFallback className="text-2xl font-bold bg-primary text-primary-foreground">
+          <Skeleton className="h-10 w-full" />
+          <Skeleton className="h-24 w-full" />
+          <Skeleton className="h-10 w-full" />
+        </div>
+      ) : (
+        <div className="bg-card border border-card-border rounded-xl overflow-hidden">
+          {/* Profile header */}
+          <div className="h-20 bg-gradient-to-r from-primary/20 to-primary/5" />
+          <div className="px-6 pb-6 -mt-10">
+            <div className="flex items-end gap-4 mb-6">
+              <Avatar className="w-20 h-20 border-4 border-card ring-2 ring-primary/20 shrink-0">
+                <AvatarImage src={avatarUrl || me?.avatarUrl || undefined} />
+                <AvatarFallback className="text-3xl font-bold bg-gradient-to-br from-primary to-orange-400 text-white">
                   {me?.username?.[0]?.toUpperCase()}
                 </AvatarFallback>
               </Avatar>
-              <div>
-                <p className="font-semibold">u/{me?.username}</p>
-                <p className="text-sm text-muted-foreground">{me?.karma.toLocaleString()} karma</p>
+              <div className="pb-1">
+                <p className="font-bold text-lg">u/{me?.username}</p>
+                <p className="text-sm text-muted-foreground flex items-center gap-1">
+                  <Trophy className="w-3.5 h-3.5 text-primary" />
+                  {me?.karma.toLocaleString()} karma
+                </p>
               </div>
             </div>
-            <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
-              <div>
-                <Label>Username</Label>
-                <Input {...register("username")} data-testid="input-username" />
-                {errors.username && <p className="text-destructive text-xs mt-1">{errors.username.message}</p>}
+
+            <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5">
+              <div className="space-y-1.5">
+                <Label className="flex items-center gap-1.5 text-sm font-medium">
+                  <User className="w-3.5 h-3.5" /> Username
+                </Label>
+                <Input
+                  {...register("username")}
+                  data-testid="input-username"
+                  className="h-10"
+                  placeholder="your_username"
+                />
+                {errors.username && (
+                  <motion.p initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} className="text-destructive text-xs">
+                    {errors.username.message}
+                  </motion.p>
+                )}
+                <p className="text-xs text-muted-foreground">Letters, numbers, and underscores only. 3–20 characters.</p>
               </div>
-              <div>
-                <Label>Bio</Label>
-                <Textarea {...register("bio")} placeholder="Tell us about yourself..." data-testid="input-bio" />
+
+              <div className="space-y-1.5">
+                <Label className="flex items-center gap-1.5 text-sm font-medium">
+                  <FileText className="w-3.5 h-3.5" /> Bio
+                </Label>
+                <Textarea
+                  {...register("bio")}
+                  placeholder="Tell the community about yourself..."
+                  data-testid="input-bio"
+                  className="min-h-[90px] resize-none"
+                  maxLength={500}
+                />
+                <p className="text-xs text-muted-foreground">Max 500 characters.</p>
               </div>
-              <div>
-                <Label>Avatar URL</Label>
-                <Input {...register("avatarUrl")} placeholder="https://example.com/avatar.jpg" data-testid="input-avatar-url" />
+
+              <div className="space-y-1.5">
+                <Label className="flex items-center gap-1.5 text-sm font-medium">
+                  <Image className="w-3.5 h-3.5" /> Avatar URL
+                </Label>
+                <Input
+                  {...register("avatarUrl")}
+                  placeholder="https://example.com/avatar.jpg"
+                  data-testid="input-avatar-url"
+                  className="h-10"
+                />
+                {errors.avatarUrl && (
+                  <motion.p initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} className="text-destructive text-xs">
+                    Must be a valid URL
+                  </motion.p>
+                )}
               </div>
-              <Button type="submit" disabled={updateProfile.isPending} data-testid="button-save-settings">
-                {updateProfile.isPending ? "Saving..." : "Save Changes"}
-              </Button>
+
+              <div className="flex gap-3 pt-1">
+                <Button
+                  type="submit"
+                  disabled={updateProfile.isPending || !isDirty}
+                  data-testid="button-save-settings"
+                  className="gap-1.5"
+                >
+                  {updateProfile.isPending
+                    ? <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Saving...</>
+                    : <><Save className="w-3.5 h-3.5" /> Save Changes</>}
+                </Button>
+                {isDirty && (
+                  <motion.div initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }}>
+                    <Button type="button" variant="outline" onClick={() => reset()} disabled={updateProfile.isPending}>
+                      Discard
+                    </Button>
+                  </motion.div>
+                )}
+              </div>
             </form>
-          </>
-        )}
-      </div>
-    </div>
+          </div>
+        </div>
+      )}
+    </motion.div>
   );
 }
