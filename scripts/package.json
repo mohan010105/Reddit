@@ -1,0 +1,23 @@
+{
+  "name": "@workspace/scripts",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "hello": "tsx ./src/hello.ts",
+    "seed": "tsx ./src/seed.ts",
+    "seed-dataset": "tsx ./src/seedDataset.ts",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "@types/pg": "^8.11.10",
+    "tsx": "catalog:"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.105.3",
+    "drizzle-orm": "catalog:",
+    "node-fetch": "^2.7.0",
+    "pg": "^8.20.0"
+  }
+}

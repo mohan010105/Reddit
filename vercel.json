@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "cleanUrls": true,
+  "buildCommand": "pnpm --filter @workspace/reddit-app build",
+  "outputDirectory": "artifacts/reddit-app/dist/public",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}

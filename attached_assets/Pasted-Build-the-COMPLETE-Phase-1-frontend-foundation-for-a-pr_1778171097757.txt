@@ -1,0 +1,429 @@
+Build the COMPLETE Phase 1 frontend foundation for a production-grade Reddit-style social media platform using React + Vite + Tailwind CSS + Supabase.
+
+====================================================
+TECH STACK
+====================================================
+
+Frontend:
+- React (Vite)
+- Tailwind CSS
+- React Router DOM
+- Axios
+- Zustand
+- React Hook Form
+- Framer Motion
+- Lucide React
+- React Hot Toast
+
+Backend Services:
+- Supabase Auth
+- Supabase PostgreSQL
+- Supabase Storage
+- Supabase Realtime
+
+====================================================
+OBJECTIVE
+====================================================
+
+Create the FULL frontend foundation with:
+- scalable architecture
+- reusable components
+- responsive design
+- production-ready structure
+- modern SaaS UI
+- Reddit-style layout
+- authentication-ready system
+
+The frontend must be cleanly structured and optimized for future scaling.
+
+====================================================
+INSTALL REQUIRED PACKAGES
+====================================================
+
+Install:
+- react-router-dom
+- axios
+- zustand
+- react-hook-form
+- framer-motion
+- lucide-react
+- react-hot-toast
+- @supabase/supabase-js
+- clsx
+- tailwind-merge
+
+Configure:
+- Tailwind CSS
+- PostCSS
+- Environment variables
+
+====================================================
+CREATE FOLDER STRUCTURE
+====================================================
+
+Create this structure:
+
+src/
+│
+├── api/
+├── assets/
+├── animations/
+├── components/
+│   ├── auth/
+│   ├── common/
+│   ├── layout/
+│   ├── post/
+│   ├── comment/
+│   ├── community/
+│   └── profile/
+│
+├── hooks/
+├── layouts/
+├── lib/
+├── modals/
+├── pages/
+│   ├── auth/
+│   ├── home/
+│   ├── community/
+│   ├── profile/
+│   └── admin/
+│
+├── routes/
+├── services/
+├── store/
+├── styles/
+├── utils/
+└── App.jsx
+
+====================================================
+TAILWIND CONFIGURATION
+====================================================
+
+Configure:
+- Dark mode support
+- Custom Reddit-inspired theme
+- Responsive breakpoints
+- Custom utility classes
+- Reusable typography system
+
+Use modern colors:
+- orange primary
+- dark background
+- glassmorphism cards
+- soft borders
+- smooth hover effects
+
+====================================================
+GLOBAL STYLING
+====================================================
+
+Create:
+- custom scrollbar
+- smooth transitions
+- reusable card styles
+- reusable button styles
+- typography utilities
+- dark mode styling
+
+====================================================
+SUPABASE SETUP
+====================================================
+
+Create:
+src/lib/supabase.js
+
+Implement:
+- Supabase client initialization
+- environment variable support
+- auth session handling
+
+Create:
+.env example
+
+Variables:
+VITE_SUPABASE_URL
+VITE_SUPABASE_ANON_KEY
+
+====================================================
+ROUTING SYSTEM
+====================================================
+
+Implement React Router structure with:
+
+Public Routes:
+- /
+- /login
+- /register
+- /community/:slug
+- /post/:id
+
+Protected Routes:
+- /profile
+- /settings
+- /saved
+- /notifications
+- /create-post
+
+Admin Routes:
+- /admin
+- /admin/users
+- /admin/posts
+- /admin/reports
+
+Create:
+- ProtectedRoute component
+- AdminRoute component
+- Route guards
+- Lazy loaded pages
+
+====================================================
+MAIN LAYOUT SYSTEM
+====================================================
+
+Create reusable layouts:
+
+1. MainLayout
+2. AuthLayout
+3. AdminLayout
+
+MainLayout must contain:
+- Sticky navbar
+- Left sidebar
+- Main feed area
+- Right sidebar
+- Mobile bottom navigation
+
+====================================================
+NAVBAR IMPLEMENTATION
+====================================================
+
+Create modern responsive navbar with:
+- Logo
+- Search bar
+- Notification icon
+- User dropdown
+- Theme toggle
+- Login/Register buttons
+- Mobile menu
+
+Features:
+- sticky top navbar
+- responsive behavior
+- animated interactions
+- glassmorphism effect
+
+====================================================
+LEFT SIDEBAR
+====================================================
+
+Create sidebar with:
+- Home
+- Popular
+- Communities
+- Saved Posts
+- Profile
+- Settings
+
+Features:
+- active route highlighting
+- collapsible mobile mode
+- responsive design
+
+====================================================
+RIGHT SIDEBAR
+====================================================
+
+Create:
+- Trending communities
+- Trending hashtags
+- Suggested users
+- Recent posts
+
+====================================================
+AUTH PAGES
+====================================================
+
+Create:
+1. Login page
+2. Register page
+3. Forgot password page
+
+Features:
+- React Hook Form validation
+- Supabase auth integration
+- Google OAuth button
+- Error handling
+- Loading states
+- Toast notifications
+- Password visibility toggle
+
+====================================================
+HOME FEED PAGE
+====================================================
+
+Create:
+- responsive feed layout
+- feed sorting tabs
+- infinite scrolling
+- loading skeletons
+- reusable post card component
+
+====================================================
+POST CARD COMPONENT
+====================================================
+
+Build reusable post card with:
+- upvote/downvote UI
+- community info
+- author info
+- title
+- content preview
+- image preview
+- comment count
+- save button
+- share button
+
+Use:
+- Framer Motion animations
+- hover effects
+- responsive design
+
+====================================================
+COMMUNITY UI
+====================================================
+
+Create:
+- community cards
+- community page
+- join/leave button
+- community banner
+- community avatar
+- community details section
+
+====================================================
+COMMENT SYSTEM UI
+====================================================
+
+Create:
+- nested comment component
+- reply button
+- vote buttons
+- comment form
+- comment thread rendering
+
+====================================================
+STATE MANAGEMENT
+====================================================
+
+Use Zustand.
+
+Create stores:
+- authStore
+- postStore
+- communityStore
+- notificationStore
+- uiStore
+
+Features:
+- global auth state
+- theme state
+- modal state
+- feed state
+
+====================================================
+API LAYER
+====================================================
+
+Create:
+- centralized Axios instance
+- API interceptors
+- auth token handling
+- reusable API services
+
+====================================================
+MODAL SYSTEM
+====================================================
+
+Create reusable modals:
+- Create Post Modal
+- Create Community Modal
+- Confirmation Modal
+
+Features:
+- animated open/close
+- accessibility support
+- reusable structure
+
+====================================================
+UI/UX REQUIREMENTS
+====================================================
+
+Design must be:
+- modern
+- premium
+- responsive
+- mobile-first
+- smooth animations
+- glassmorphism inspired
+- Reddit-style feed UI
+
+Implement:
+- hover animations
+- skeleton loading
+- empty states
+- loading states
+- beautiful transitions
+
+====================================================
+RESPONSIVE REQUIREMENTS
+====================================================
+
+Optimize for:
+- desktop
+- tablet
+- mobile
+
+Implement:
+- mobile bottom nav
+- responsive sidebars
+- collapsible menus
+- touch-friendly UI
+
+====================================================
+CODE QUALITY
+====================================================
+
+Ensure:
+- reusable components
+- scalable architecture
+- clean code
+- modular structure
+- proper naming conventions
+- production-ready patterns
+
+====================================================
+FINAL DELIVERABLES
+====================================================
+
+Generate:
+1. Complete frontend structure
+2. Tailwind setup
+3. Supabase setup
+4. Responsive layouts
+5. Navbar
+6. Sidebars
+7. Auth pages
+8. Home feed UI
+9. Community UI
+10. Comment UI
+11. Zustand stores
+12. API layer
+13. Route protection
+14. Reusable components
+15. Environment configuration
+
+The frontend must run successfully using:
+npm install
+npm run dev
+
+without errors and must be ready for backend integration.

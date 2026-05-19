@@ -1,0 +1,1620 @@
+openapi: 3.1.0
+info:
+  # Do not change the title, if the title changes, the import paths will be broken
+  title: Api
+  version: 0.1.0
+  description: Reddit-style social platform API
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+  - name: auth
+  - name: users
+  - name: posts
+  - name: communities
+  - name: comments
+  - name: votes
+  - name: notifications
+  - name: saved
+  - name: search
+  - name: admin
+
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+
+  # ── AUTH ─────────────────────────────────────────────────────────────────
+  /auth/me:
+    get:
+      operationId: getMe
+      tags: [auth]
+      summary: Get current user
+      responses:
+        "200":
+          description: Current user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "401":
+          description: Unauthorized
+
+  /auth/profile:
+    patch:
+      operationId: updateMyProfile
+      tags: [auth]
+      summary: Update current user profile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateProfileBody"
+      responses:
+        "200":
+          description: Updated user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+
+  # ── USERS ─────────────────────────────────────────────────────────────────
+  /users/{username}:
+    get:
+      operationId: getUserByUsername
+      tags: [users]
+      summary: Get a public user profile
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: User profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserProfile"
+        "404":
+          description: Not found
+
+  /users/{username}/posts:
+    get:
+      operationId: getUserPosts
+      tags: [users]
+      summary: List posts by a user
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+      responses:
+        "200":
+          description: Paginated posts
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaginatedPosts"
+
+  /users/{username}/follow:
+    post:
+      operationId: followUser
+      tags: [users]
+      summary: Follow a user
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+    delete:
+      operationId: unfollowUser
+      tags: [users]
+      summary: Unfollow a user
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  # ── POSTS ─────────────────────────────────────────────────────────────────
+  /posts:
+    get:
+      operationId: listPosts
+      tags: [posts]
+      summary: List posts for the home feed
+      parameters:
+        - name: sort
+          in: query
+          schema:
+            type: string
+            enum: [hot, new, top, rising]
+            default: hot
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: communityId
+          in: query
+          schema:
+            type: ["integer", "null"]
+      responses:
+        "200":
+          description: Paginated posts
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaginatedPosts"
+
+    post:
+      operationId: createPost
+      tags: [posts]
+      summary: Create a new post
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreatePostBody"
+      responses:
+        "201":
+          description: Created post
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Post"
+
+  /posts/{id}:
+    get:
+      operationId: getPost
+      tags: [posts]
+      summary: Get a post by id
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Post
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Post"
+        "404":
+          description: Not found
+
+    patch:
+      operationId: updatePost
+      tags: [posts]
+      summary: Update a post
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdatePostBody"
+      responses:
+        "200":
+          description: Updated post
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Post"
+
+    delete:
+      operationId: deletePost
+      tags: [posts]
+      summary: Delete a post
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /posts/{id}/vote:
+    post:
+      operationId: votePost
+      tags: [votes]
+      summary: Upvote or downvote a post (or remove vote)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VoteBody"
+      responses:
+        "200":
+          description: Updated vote counts
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VoteResult"
+
+  /posts/{id}/save:
+    post:
+      operationId: savePost
+      tags: [saved]
+      summary: Save a post
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+    delete:
+      operationId: unsavePost
+      tags: [saved]
+      summary: Unsave a post
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /posts/{id}/report:
+    post:
+      operationId: reportPost
+      tags: [posts]
+      summary: Report a post
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReportBody"
+      responses:
+        "201":
+          description: Report submitted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  # ── COMMENTS ──────────────────────────────────────────────────────────────
+  /posts/{postId}/comments:
+    get:
+      operationId: listComments
+      tags: [comments]
+      summary: Get comments for a post (nested)
+      parameters:
+        - name: postId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Nested comments
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Comment"
+
+    post:
+      operationId: createComment
+      tags: [comments]
+      summary: Post a comment on a post
+      parameters:
+        - name: postId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateCommentBody"
+      responses:
+        "201":
+          description: Created comment
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Comment"
+
+  /comments/{id}:
+    patch:
+      operationId: updateComment
+      tags: [comments]
+      summary: Update a comment
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateCommentBody"
+      responses:
+        "200":
+          description: Updated comment
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Comment"
+
+    delete:
+      operationId: deleteComment
+      tags: [comments]
+      summary: Delete a comment
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /comments/{id}/vote:
+    post:
+      operationId: voteComment
+      tags: [votes]
+      summary: Vote on a comment
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VoteBody"
+      responses:
+        "200":
+          description: Vote result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VoteResult"
+
+  # ── COMMUNITIES ───────────────────────────────────────────────────────────
+  /communities:
+    get:
+      operationId: listCommunities
+      tags: [communities]
+      summary: List all communities
+      parameters:
+        - name: q
+          in: query
+          schema:
+            type: string
+        - name: sort
+          in: query
+          schema:
+            type: string
+            enum: [popular, new, alphabetical]
+            default: popular
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+      responses:
+        "200":
+          description: Paginated communities
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaginatedCommunities"
+
+    post:
+      operationId: createCommunity
+      tags: [communities]
+      summary: Create a new community
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateCommunityBody"
+      responses:
+        "201":
+          description: Created community
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Community"
+
+  /communities/{slug}:
+    get:
+      operationId: getCommunity
+      tags: [communities]
+      summary: Get a community by slug
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Community
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Community"
+        "404":
+          description: Not found
+
+    patch:
+      operationId: updateCommunity
+      tags: [communities]
+      summary: Update a community
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateCommunityBody"
+      responses:
+        "200":
+          description: Updated community
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Community"
+
+  /communities/{slug}/join:
+    post:
+      operationId: joinCommunity
+      tags: [communities]
+      summary: Join a community
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+    delete:
+      operationId: leaveCommunity
+      tags: [communities]
+      summary: Leave a community
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /communities/{slug}/posts:
+    get:
+      operationId: getCommunityPosts
+      tags: [communities]
+      summary: Get posts in a community
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: sort
+          in: query
+          schema:
+            type: string
+            enum: [hot, new, top, rising]
+            default: hot
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+      responses:
+        "200":
+          description: Paginated posts
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaginatedPosts"
+
+  # ── SAVED POSTS ───────────────────────────────────────────────────────────
+  /saved:
+    get:
+      operationId: listSavedPosts
+      tags: [saved]
+      summary: List saved posts for current user
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+      responses:
+        "200":
+          description: Paginated saved posts
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaginatedPosts"
+
+  # ── NOTIFICATIONS ─────────────────────────────────────────────────────────
+  /notifications:
+    get:
+      operationId: listNotifications
+      tags: [notifications]
+      summary: List notifications for current user
+      parameters:
+        - name: unreadOnly
+          in: query
+          schema:
+            type: boolean
+            default: false
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+      responses:
+        "200":
+          description: Paginated notifications
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaginatedNotifications"
+
+  /notifications/read-all:
+    post:
+      operationId: markAllNotificationsRead
+      tags: [notifications]
+      summary: Mark all notifications as read
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /notifications/{id}/read:
+    post:
+      operationId: markNotificationRead
+      tags: [notifications]
+      summary: Mark a single notification as read
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  # ── SEARCH ────────────────────────────────────────────────────────────────
+  /search:
+    get:
+      operationId: search
+      tags: [search]
+      summary: Search posts, communities, and users
+      parameters:
+        - name: q
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: type
+          in: query
+          schema:
+            type: string
+            enum: [all, posts, communities, users]
+            default: all
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+      responses:
+        "200":
+          description: Search results
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SearchResults"
+
+  # ── TRENDING ──────────────────────────────────────────────────────────────
+  /trending:
+    get:
+      operationId: getTrending
+      tags: [posts]
+      summary: Get trending posts and communities
+      responses:
+        "200":
+          description: Trending data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TrendingResponse"
+
+  # ── ADMIN ─────────────────────────────────────────────────────────────────
+  /admin/stats:
+    get:
+      operationId: getAdminStats
+      tags: [admin]
+      summary: Get platform analytics stats
+      responses:
+        "200":
+          description: Admin stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminStats"
+
+  /admin/users:
+    get:
+      operationId: listAdminUsers
+      tags: [admin]
+      summary: List all users (admin)
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: q
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Paginated users
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaginatedUsers"
+
+  /admin/users/{id}/role:
+    patch:
+      operationId: updateUserRole
+      tags: [admin]
+      summary: Update user role
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateRoleBody"
+      responses:
+        "200":
+          description: Updated user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+
+  /admin/users/{id}/ban:
+    post:
+      operationId: banUser
+      tags: [admin]
+      summary: Ban a user
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /admin/reports:
+    get:
+      operationId: listReports
+      tags: [admin]
+      summary: List content reports (admin)
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [pending, resolved, dismissed]
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+      responses:
+        "200":
+          description: Paginated reports
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaginatedReports"
+
+  /admin/reports/{id}/resolve:
+    post:
+      operationId: resolveReport
+      tags: [admin]
+      summary: Resolve a report
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ResolveReportBody"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /admin/posts:
+    get:
+      operationId: listAdminPosts
+      tags: [admin]
+      summary: List all posts (admin)
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: q
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Paginated posts
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaginatedPosts"
+
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+        - status
+
+    SuccessResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+      required:
+        - success
+
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        supabaseId:
+          type: string
+        username:
+          type: string
+        email:
+          type: string
+        avatarUrl:
+          type: ["string", "null"]
+        bio:
+          type: ["string", "null"]
+        role:
+          type: string
+          enum: [user, moderator, admin]
+        karma:
+          type: integer
+        postCount:
+          type: integer
+        commentCount:
+          type: integer
+        isBanned:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - supabaseId
+        - username
+        - email
+        - role
+        - karma
+        - postCount
+        - commentCount
+        - isBanned
+        - createdAt
+
+    UserProfile:
+      type: object
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+        avatarUrl:
+          type: ["string", "null"]
+        bio:
+          type: ["string", "null"]
+        karma:
+          type: integer
+        postCount:
+          type: integer
+        commentCount:
+          type: integer
+        followerCount:
+          type: integer
+        followingCount:
+          type: integer
+        isFollowedByMe:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - username
+        - karma
+        - postCount
+        - commentCount
+        - followerCount
+        - followingCount
+        - isFollowedByMe
+        - createdAt
+
+    UpdateProfileBody:
+      type: object
+      properties:
+        username:
+          type: string
+        bio:
+          type: ["string", "null"]
+        avatarUrl:
+          type: ["string", "null"]
+
+    Post:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        content:
+          type: ["string", "null"]
+        imageUrl:
+          type: ["string", "null"]
+        type:
+          type: string
+          enum: [text, image, link]
+        upvotes:
+          type: integer
+        downvotes:
+          type: integer
+        score:
+          type: integer
+        commentCount:
+          type: integer
+        myVote:
+          type: ["integer", "null"]
+        isSaved:
+          type: boolean
+        isDeleted:
+          type: boolean
+        authorId:
+          type: integer
+        author:
+          $ref: "#/components/schemas/PostAuthor"
+        communityId:
+          type: integer
+        community:
+          $ref: "#/components/schemas/PostCommunity"
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - title
+        - type
+        - upvotes
+        - downvotes
+        - score
+        - commentCount
+        - isSaved
+        - isDeleted
+        - authorId
+        - author
+        - communityId
+        - community
+        - createdAt
+        - updatedAt
+
+    PostAuthor:
+      type: object
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+        avatarUrl:
+          type: ["string", "null"]
+      required:
+        - id
+        - username
+
+    PostCommunity:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        slug:
+          type: string
+        iconUrl:
+          type: ["string", "null"]
+      required:
+        - id
+        - name
+        - slug
+
+    CreatePostBody:
+      type: object
+      properties:
+        title:
+          type: string
+        content:
+          type: ["string", "null"]
+        imageUrl:
+          type: ["string", "null"]
+        type:
+          type: string
+          enum: [text, image, link]
+        communityId:
+          type: integer
+      required:
+        - title
+        - type
+        - communityId
+
+    UpdatePostBody:
+      type: object
+      properties:
+        title:
+          type: string
+        content:
+          type: ["string", "null"]
+
+    PaginatedPosts:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Post"
+        total:
+          type: integer
+        page:
+          type: integer
+        limit:
+          type: integer
+        hasMore:
+          type: boolean
+      required:
+        - data
+        - total
+        - page
+        - limit
+        - hasMore
+
+    Comment:
+      type: object
+      properties:
+        id:
+          type: integer
+        content:
+          type: string
+        upvotes:
+          type: integer
+        downvotes:
+          type: integer
+        score:
+          type: integer
+        myVote:
+          type: ["integer", "null"]
+        isDeleted:
+          type: boolean
+        depth:
+          type: integer
+        parentId:
+          type: ["integer", "null"]
+        postId:
+          type: integer
+        authorId:
+          type: integer
+        author:
+          $ref: "#/components/schemas/PostAuthor"
+        replies:
+          type: array
+          items:
+            $ref: "#/components/schemas/Comment"
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - content
+        - upvotes
+        - downvotes
+        - score
+        - isDeleted
+        - depth
+        - postId
+        - authorId
+        - author
+        - replies
+        - createdAt
+        - updatedAt
+
+    CreateCommentBody:
+      type: object
+      properties:
+        content:
+          type: string
+        parentId:
+          type: ["integer", "null"]
+      required:
+        - content
+
+    UpdateCommentBody:
+      type: object
+      properties:
+        content:
+          type: string
+      required:
+        - content
+
+    VoteBody:
+      type: object
+      properties:
+        value:
+          type: integer
+          enum: [1, -1, 0]
+      required:
+        - value
+
+    VoteResult:
+      type: object
+      properties:
+        upvotes:
+          type: integer
+        downvotes:
+          type: integer
+        score:
+          type: integer
+        myVote:
+          type: ["integer", "null"]
+      required:
+        - upvotes
+        - downvotes
+        - score
+
+    ReportBody:
+      type: object
+      properties:
+        reason:
+          type: string
+        details:
+          type: ["string", "null"]
+      required:
+        - reason
+
+    Community:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        slug:
+          type: string
+        description:
+          type: ["string", "null"]
+        iconUrl:
+          type: ["string", "null"]
+        bannerUrl:
+          type: ["string", "null"]
+        memberCount:
+          type: integer
+        postCount:
+          type: integer
+        isJoined:
+          type: boolean
+        creatorId:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - name
+        - slug
+        - memberCount
+        - postCount
+        - isJoined
+        - creatorId
+        - createdAt
+
+    CreateCommunityBody:
+      type: object
+      properties:
+        name:
+          type: string
+        slug:
+          type: string
+        description:
+          type: ["string", "null"]
+        iconUrl:
+          type: ["string", "null"]
+        bannerUrl:
+          type: ["string", "null"]
+      required:
+        - name
+        - slug
+
+    UpdateCommunityBody:
+      type: object
+      properties:
+        description:
+          type: ["string", "null"]
+        iconUrl:
+          type: ["string", "null"]
+        bannerUrl:
+          type: ["string", "null"]
+
+    PaginatedCommunities:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Community"
+        total:
+          type: integer
+        page:
+          type: integer
+        limit:
+          type: integer
+        hasMore:
+          type: boolean
+      required:
+        - data
+        - total
+        - page
+        - limit
+        - hasMore
+
+    Notification:
+      type: object
+      properties:
+        id:
+          type: integer
+        type:
+          type: string
+          enum: [comment_reply, post_comment, upvote, follow, mention]
+        message:
+          type: string
+        isRead:
+          type: boolean
+        postId:
+          type: ["integer", "null"]
+        commentId:
+          type: ["integer", "null"]
+        actorId:
+          type: ["integer", "null"]
+        actor:
+          $ref: "#/components/schemas/PostAuthor"
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - type
+        - message
+        - isRead
+        - actor
+        - createdAt
+
+    PaginatedNotifications:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Notification"
+        total:
+          type: integer
+        unreadCount:
+          type: integer
+        page:
+          type: integer
+        limit:
+          type: integer
+        hasMore:
+          type: boolean
+      required:
+        - data
+        - total
+        - unreadCount
+        - page
+        - limit
+        - hasMore
+
+    SearchResults:
+      type: object
+      properties:
+        posts:
+          type: array
+          items:
+            $ref: "#/components/schemas/Post"
+        communities:
+          type: array
+          items:
+            $ref: "#/components/schemas/Community"
+        users:
+          type: array
+          items:
+            $ref: "#/components/schemas/UserProfile"
+        total:
+          type: integer
+      required:
+        - posts
+        - communities
+        - users
+        - total
+
+    TrendingResponse:
+      type: object
+      properties:
+        trendingPosts:
+          type: array
+          items:
+            $ref: "#/components/schemas/Post"
+        trendingCommunities:
+          type: array
+          items:
+            $ref: "#/components/schemas/Community"
+        recommendedCommunities:
+          type: array
+          items:
+            $ref: "#/components/schemas/Community"
+      required:
+        - trendingPosts
+        - trendingCommunities
+        - recommendedCommunities
+
+    AdminStats:
+      type: object
+      properties:
+        totalUsers:
+          type: integer
+        newUsersToday:
+          type: integer
+        totalPosts:
+          type: integer
+        newPostsToday:
+          type: integer
+        totalComments:
+          type: integer
+        totalCommunities:
+          type: integer
+        pendingReports:
+          type: integer
+        bannedUsers:
+          type: integer
+        dailyActiveUsers:
+          type: array
+          items:
+            $ref: "#/components/schemas/DailyCount"
+        postsPerDay:
+          type: array
+          items:
+            $ref: "#/components/schemas/DailyCount"
+        topCommunities:
+          type: array
+          items:
+            $ref: "#/components/schemas/Community"
+      required:
+        - totalUsers
+        - newUsersToday
+        - totalPosts
+        - newPostsToday
+        - totalComments
+        - totalCommunities
+        - pendingReports
+        - bannedUsers
+        - dailyActiveUsers
+        - postsPerDay
+        - topCommunities
+
+    DailyCount:
+      type: object
+      properties:
+        date:
+          type: string
+        count:
+          type: integer
+      required:
+        - date
+        - count
+
+    PaginatedUsers:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/User"
+        total:
+          type: integer
+        page:
+          type: integer
+        limit:
+          type: integer
+        hasMore:
+          type: boolean
+      required:
+        - data
+        - total
+        - page
+        - limit
+        - hasMore
+
+    UpdateRoleBody:
+      type: object
+      properties:
+        role:
+          type: string
+          enum: [user, moderator, admin]
+      required:
+        - role
+
+    Report:
+      type: object
+      properties:
+        id:
+          type: integer
+        reason:
+          type: string
+        details:
+          type: ["string", "null"]
+        status:
+          type: string
+          enum: [pending, resolved, dismissed]
+        postId:
+          type: ["integer", "null"]
+        commentId:
+          type: ["integer", "null"]
+        reporterId:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - reason
+        - status
+        - reporterId
+        - createdAt
+
+    PaginatedReports:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Report"
+        total:
+          type: integer
+        page:
+          type: integer
+        limit:
+          type: integer
+        hasMore:
+          type: boolean
+      required:
+        - data
+        - total
+        - page
+        - limit
+        - hasMore
+
+    ResolveReportBody:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [resolved, dismissed]
+        action:
+          type: ["string", "null"]
+      required:
+        - status

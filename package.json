@@ -1,0 +1,33 @@
+{
+  "name": "workspace",
+  "version": "0.0.0",
+  "license": "MIT",
+  "scripts": {
+    "preinstall": "node -e \"const fs = require('fs'); ['package-lock.json', 'yarn.lock'].forEach(f => fs.existsSync(f) && fs.unlinkSync(f)); if(process.env.npm_config_user_agent && !process.env.npm_config_user_agent.includes('pnpm')) { console.error('Use pnpm instead'); process.exit(1); }\"",
+    "dev": "pnpm -r --parallel dev",
+    "build": "pnpm run typecheck && pnpm -r --if-present run build",
+    "typecheck:libs": "tsc --build",
+    "typecheck": "pnpm run typecheck:libs && pnpm -r --filter \"./artifacts/**\" --filter \"./scripts\" --if-present run typecheck",
+    "lint": "eslint . --max-warnings 50",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,css,md}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,css,md}\"",
+    "test": "pnpm -r --if-present run test",
+    "test:frontend": "pnpm --filter @workspace/reddit-app run test",
+    "test:backend": "pnpm --filter @workspace/api-server run test",
+    "test:e2e": "cd e2e && npx playwright test",
+    "test:coverage": "pnpm -r --if-present run test -- --coverage"
+  },
+  "private": true,
+  "devDependencies": {
+    "@eslint/js": "^9.25.0",
+    "@playwright/test": "^1.52.0",
+    "@rollup/rollup-win32-x64-msvc": "^4.60.3",
+    "@typescript-eslint/eslint-plugin": "^8.32.0",
+    "@typescript-eslint/parser": "^8.32.0",
+    "cross-env": "^10.1.0",
+    "eslint": "^9.25.0",
+    "lightningcss-win32-x64-msvc": "^1.32.0",
+    "prettier": "^3.8.1",
+    "typescript": "~5.9.2"
+  }
+}

@@ -1,0 +1,75 @@
+{
+  "name": "Threadit - Premium Social Media Platform",
+  "short_name": "Threadit",
+  "description": "The enterprise-grade Reddit-style social media platform. Join communities, share posts, and connect.",
+  "start_url": "/",
+  "id": "/",
+  "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone"],
+  "orientation": "any",
+  "background_color": "#0f1729",
+  "theme_color": "#ff5500",
+  "scope": "/",
+  "lang": "en",
+  "dir": "ltr",
+  "prefer_related_applications": false,
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/opengraph.jpg",
+      "sizes": "1280x800",
+      "type": "image/jpeg",
+      "form_factor": "wide",
+      "label": "Threadit Desktop View"
+    }
+  ],
+  "categories": ["social", "news", "entertainment"],
+  "shortcuts": [
+    {
+      "name": "New Post",
+      "short_name": "Post",
+      "description": "Create a new post",
+      "url": "/?action=create-post",
+      "icons": [{ "src": "/favicon.svg", "sizes": "96x96" }]
+    },
+    {
+      "name": "Notifications",
+      "short_name": "Alerts",
+      "description": "View your notifications",
+      "url": "/notifications"
+    },
+    {
+      "name": "Communities",
+      "short_name": "Explore",
+      "description": "Browse communities",
+      "url": "/communities"
+    }
+  ],
+  "handle_links": "preferred",
+  "launch_handler": {
+    "client_mode": "navigate-existing"
+  }
+}
